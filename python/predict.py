@@ -32,5 +32,8 @@ class Predict:
         original, X = self.get_data(in_filename, clean_filename)
         model = pickle.load(open(model_filename, 'rb'))
         y_predict = model.predict(X)
-        pd.DataFrame({'title': original, 'class': y_predict}).to_csv(out_filename, index = False)
+
+        df = pd.DataFrame({'title': original, 'class': y_predict})
+        df['class'] = df['class'].map({0: 'Entertainment', 1: 'News', 2: 'Sports'})
+        df.to_csv(out_filename, index = False)
         print('Predictions saved at {}'.format(out_filename))
