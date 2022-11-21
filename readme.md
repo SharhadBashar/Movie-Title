@@ -1,6 +1,6 @@
 # Predicting the type of movie or tv show from its title
 
-This code is a simple NLP classifier which predicts the type of movie or tv show from its title
+This code is a simple NLP classifier which predicts the type of movie or tv show from its title.
 
 The classes are:
 1. Entertainment
@@ -31,7 +31,7 @@ To train, you must call `main.py` and specify the `train` or `t` command, along 
 python3 main.py train train.csv
 ```
 
-This will take your data, clean it and store it in a file called `model_train.csv`. This file can be deleted after
+This will take your data (csv or xlsx), clean it and store it in a file called `model_train.csv`. This file can be deleted after
 
 It will then create a folder called `model` and the trained model will be stored in there as `model.pkl`
 
