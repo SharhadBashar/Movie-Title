@@ -11,30 +11,31 @@ from data import Data
 
 class Train:
     def __init__(self, 
-                 csv_filename = 'movies.csv',
-                 excel_filename = 'VMR Python Data TEST Sep\'22.xlsx',
+                 in_filename,
+                 clean_filename = 'model_train.csv',
+                 model_filename = 'model/model.pkl',
                  delete_csv = False,
-                 delete_excel = False,
-                 model_filename = 'model.pkl'):
-        self.train(csv_filename = 'movies.csv', model_filename = 'model.pkl')
-        if delete_csv:
-            os.remove(csv_filename)
-        if delete_excel:
-            os.remove(excel_filename)
+                 delete_excel = False
+                 ):
+        if not os.path.isdir('model'):
+            os.makedirs('model')
+
+        self.train(in_filename, clean_filename = 'model_train.csv', model_filename = model_filename)
         
-    def get_data(self, 
-                 excel_filename = 'VMR Python Data TEST Sep\'22.xlsx',
-                 csv_filename = 'movies.csv'):
-        Data(excel_filename = 'VMR Python Data TEST Sep\'22.xlsx', 
-             csv_filename = 'movies.csv',
-            convert = True)
-        df = shuffle(pd.read_csv(csv_filename).dropna())
+        delete_clean_file = input('Do you want to delete \'model_train.csv\'? If so enter Y: ')
+        if (delete_clean_file.lower() == 'y'):
+            os.remove('model_train.csv')
+            print('\'model_train.csv\' deleted')
+        
+    def get_data(self, in_filename, clean_filename = 'model_train.csv'):
+        Data(in_filename, clean_filename = 'model_train.csv', train = Train)
+        df = shuffle(pd.read_csv(clean_filename).dropna())
         X = df['name']
         y = df['class']
         return X, y
     
-    def train(self, csv_filename = 'movies.csv', model_filename = 'model.pkl'):
-        X, y = self.get_data(csv_filename = csv_filename)
+    def train(self, in_filename, clean_filename = 'model_train.csv', model_filename = 'model/model.pkl'):
+        X, y = self.get_data(in_filename = in_filename, clean_filename = 'model_train.csv',)
         movie_clf = Pipeline([
              ('vect', CountVectorizer(stop_words = 'english')),
              ('tfidf', TfidfTransformer()),

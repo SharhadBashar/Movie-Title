@@ -6,39 +6,31 @@ from data import Data
 
 class Predict:
     def __init__(self, 
-                 csv_filename = 'movies.csv',
-                 out_filename = 'movies_predict.csv',
-                 excel_filename = 'VMR Python Data TEST Sep\'22_predict.xlsx',
-                 model_filename = 'model.pkl',
-                 delete_csv = False,
-                 delete_excel = False):
-        self.predict(csv_filename = 'movies.csv',
-                     excel_filename = 'VMR Python Data TEST Sep\'22_predict.xlsx',
-                     model_filename = 'model.pkl',
-                     out_filename = 'movies_predict.csv')
-        if delete_csv:
-            os.remove(csv_filename)
-        if delete_excel:
-            os.remove(excel_filename)
+                 in_filename,
+                 clean_filename = 'model_predict.csv',
+                 out_filename = 'predictions.csv',
+                 model_filename = 'model/model.pkl'):
+        self.predict(in_filename,
+                     clean_filename = 'model_predict.csv',
+                     out_filename = 'predictions.csv',
+                     model_filename = 'model/model.pkl')
+        os.remove('model_predict.csv')
         
     def get_data(self, 
-                 excel_filename = 'VMR Python Data TEST Sep\'22_predict.xlsx', 
-                 csv_filename = 'movies.csv'):
-        Data(excel_filename = 'VMR Python Data TEST Sep\'22_predict.xlsx', 
-             csv_filename = 'movies.csv', 
-             convert = True, train = False)
-        df = pd.read_csv(csv_filename).dropna()
-        X = df['name']
-        return X
+                 in_filename,
+                 clean_filename = 'model_predict.csv'):
+        Data(in_filename, clean_filename, train = False)
+        df = pd.read_csv(clean_filename).dropna()
+        original, X = df['title'], df['name']
+        return original, X
     
     def predict(self, 
-                csv_filename = 'movies.csv',
-                excel_filename = 'VMR Python Data TEST Sep\'22_predict.xlsx',
-                model_filename = 'model.pkl',
-                out_filename = 'movies_predict.csv'):
-        X = self.get_data(csv_filename = 'movies.csv',
-                 excel_filename = 'VMR Python Data TEST Sep\'22_predict.xlsx')
+                in_filename,
+                clean_filename = 'model_predict.csv',
+                out_filename = 'predictions.csv',
+                model_filename = 'model/model.pkl'):
+        original, X = self.get_data(in_filename, clean_filename)
         model = pickle.load(open(model_filename, 'rb'))
         y_predict = model.predict(X)
-        pd.DataFrame({'name': X, 'class': y_predict}).to_csv(out_filename, index = False)
+        pd.DataFrame({'title': original, 'class': y_predict}).to_csv(out_filename, index = False)
         print('Predictions saved at {}'.format(out_filename))
